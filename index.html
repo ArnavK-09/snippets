@@ -1,23 +1,170 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="robots" content="index, follow, NOODP" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
-    <title>tscircuit - Code Electronics with React</title>
-    <meta name="description" content="tscircuit is an open-source electronics design tool that lets you create circuits using React components. Design schematics, generate PCB layouts, export and manufacture PCBs online!" />
-    <meta name="keywords" content="electronic design, PCB design, schematic capture, React components, circuit design, electronics CAD, open source EDA" />
-    <meta property="og:title" content="tscircuit - Design Electronics with React Components" />
-    <meta property="og:description" content="Create electronic circuits using React components. Design schematics, generate PCB layouts, and manufacture custom PCBs with this free open-source tool." />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="tscircuit - Design Electronics with React Components" />
-    <meta name="twitter:description" content="Create electronic circuits using React components. Free open-source electronics design tool." />
-    <link rel="canonical" href="https://tscircuit.com" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="robots" content="index, follow, NOODP" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16">
+  <title>tscircuit - Code Electronics with React</title>
+  <meta name="description"
+    content="tscircuit is an open-source electronics design tool that lets you create circuits using React components. Design schematics, generate PCB layouts, export and manufacture PCBs online!" />
+  <meta name="keywords"
+    content="electronic design, PCB design, schematic capture, React components, circuit design, electronics CAD, open source EDA" />
+  <meta property="og:title" content="tscircuit - Design Electronics with React Components" />
+  <meta property="og:description"
+    content="Create electronic circuits using React components. Design schematics, generate PCB layouts, and manufacture custom PCBs with this free open-source tool." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="tscircuit - Design Electronics with React Components" />
+  <meta name="twitter:description"
+    content="Create electronic circuits using React components. Free open-source electronics design tool." />
+  <link rel="canonical" href="https://tscircuit.com" />
+  <style>
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #f0f0f0;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .skeleton {
+      width: 100%;
+      height: 20px;
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skeleton-header {
+      width: 60%;
+      height: 30px;
+      margin-bottom: 20px;
+    }
+
+    .skeleton-image {
+      width: 80%;
+      height: 200px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    }
+
+    .skeleton-text {
+      width: 70%;
+      height: 20px;
+      margin-bottom: 10px;
+    }
+
+    .skeleton-footer {
+      width: 50%;
+      height: 20px;
+      margin-bottom: 10px;
+    }
+
+    @keyframes loading {
+      0% {
+        background-position: -200% 0;
+      }
+
+      100% {
+        background-position: 200% 0;
+      }
+    }
+
+    .skeleton::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.2) 25%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0.2) 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite linear;
+    }
+
+    .skeleton-text.long {
+      width: 90%;
+    }
+
+    .skeleton-text.medium {
+      width: 70%;
+    }
+
+    .skeleton-text.short {
+      width: 50%;
+    }
+
+    .skeleton-footer {
+      width: 60%;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Loading screen -->
+  <div id="loading-screen">
+    <div class="skeleton skeleton-header"></div>
+    <div class="skeleton skeleton-image"></div>
+    <div class="skeleton skeleton-text"></div>
+    <div class="skeleton skeleton-footer"></div>
+  </div>
+
+
+  <!-- React root element -->
+  <div id="root"></div>
+
+  <!-- Loading script -->
+  <script>
+    const loadingScreen = document.getElementById('loading-screen');
+
+    const showLoading = () => {
+      if (loadingScreen) {
+        loadingScreen.style.display = 'block';
+      }
+    };
+
+    const hideLoading = () => {
+      if (loadingScreen) {
+        loadingScreen.style.display = 'none';
+        if (loadingScreen.parentNode) {
+          loadingScreen.remove();
+        }
+      }
+    };
+
+    window.addEventListener('load', () => {
+      hideLoading();
+    });
+
+    document.addEventListener('click', (event) => {
+      const link = event.target.closest('a');
+      if (link && link.href && link.origin === window.location.origin) {
+        event.preventDefault();
+        showLoading();
+        window.history.pushState(null, '', link.href);
+        window.dispatchEvent(new Event('popstate'));
+        hideLoading();
+      }
+    });
+
+    window.addEventListener('popstate', () => {
+      showLoading();
+      setTimeout(hideLoading, 500);
+    });
+  </script>
+
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

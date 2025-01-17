@@ -85,7 +85,13 @@ function App() {
   return (
     <ContextProviders>
       <ErrorBoundary>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div id="loading-screen">
+          <div className="skeleton skeleton-header"></div>
+          <div className="skeleton skeleton-image"></div>
+          <div className="skeleton skeleton-text"></div>
+          <div className="skeleton skeleton-footer"></div>
+        </div>
+        }>
           <Switch>
             <Route path="/" component={LandingPage} />
             <Route path="/editor" component={EditorPage} />

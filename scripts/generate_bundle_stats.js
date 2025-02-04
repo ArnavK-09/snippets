@@ -76,26 +76,38 @@ function compareSizes(prData, mainData, dependencies) {
     ...Object.keys(prStats.depStats),
     ...Object.keys(mainStats.depStats),
   ])
-
+  
   allDeps.forEach((dep) => {
     const prSize = prStats.depStats[dep]?.size || 0
     const mainSize = mainStats.depStats[dep]?.size || 0
     const diff = prSize - mainSize
 
+    // Handle division by zero for percentChange calculation
+    let percentChange = 0
+    if (mainSize !== 0) {
+      percentChange = (diff / mainSize) * 100
+    } else if (prSize === 0) {
+      percentChange = 0
+    } else {
+      percentChange = prSize > 0 ? Infinity : -Infinity
+    }
+
     diffStats[dep] = {
       before: mainSize,
       after: prSize,
       diff,
-      percentChange: (diff / mainSize) * 100 || 0,
+      percentChange,
     }
   })
-
   return {
     totalBefore: mainStats.totalSize,
     totalAfter: prStats.totalSize,
     totalDiff: prStats.totalSize - mainStats.totalSize,
     totalPercentChange:
-      ((prStats.totalSize - mainStats.totalSize) / mainStats.totalSize) * 100,
+      mainStats.totalSize !== 0
+        ? ((prStats.totalSize - mainStats.totalSize) / mainStats.totalSize) *
+          100
+        : 0,
     diffStats,
   }
 }

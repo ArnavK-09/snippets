@@ -83,10 +83,10 @@ function compareSizes(prData, mainData, dependencies) {
     const diff = prSize - mainSize
 
     let percentChange = "N/A"
-    if (mainSize !== 0) {
-      percentChange = (diff / mainSize) * 100
-    } else if (prSize === 0 && mainSize > 0) {
+    if (prSize === 0 && mainSize > 0) {
       percentChange = "Removed"
+    } else if (mainSize !== 0) {
+      percentChange = (diff / mainSize) * 100
     } else if (prSize > 0 && mainSize === 0) {
       percentChange = "Added"
     } else {

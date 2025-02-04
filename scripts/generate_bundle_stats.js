@@ -82,14 +82,15 @@ function compareSizes(prData, mainData, dependencies) {
     const mainSize = mainStats.depStats[dep]?.size || 0
     const diff = prSize - mainSize
 
-    // Handle division by zero for percentChange calculation
-    let percentChange = 0
+    let percentChange = "N/A"
     if (mainSize !== 0) {
       percentChange = (diff / mainSize) * 100
     } else if (prSize === 0) {
       percentChange = 0
+    } else if (prSize > 0) {
+      percentChange = "Added"
     } else {
-      percentChange = prSize > 0 ? Infinity : -Infinity
+      percentChange = "Removed"
     }
 
     diffStats[dep] = {
@@ -99,6 +100,7 @@ function compareSizes(prData, mainData, dependencies) {
       percentChange,
     }
   })
+
   return {
     totalBefore: mainStats.totalSize,
     totalAfter: prStats.totalSize,
@@ -129,7 +131,8 @@ function generateDiffMarkdown(prData, mainData, dependencies) {
 
   const significantChanges = sortedDiffs.filter(
     ([, stats]) =>
-      Math.abs(stats.percentChange) > 1 || Math.abs(stats.diff) > 1024,
+      typeof stats.percentChange === "number" &&
+      (Math.abs(stats.percentChange) > 1 || Math.abs(stats.diff) > 1024),
   )
 
   if (significantChanges.length > 0) {
@@ -139,7 +142,7 @@ function generateDiffMarkdown(prData, mainData, dependencies) {
     for (const [name, stats] of significantChanges) {
       const version = dependencies[name]
       const symbol = stats.diff > 0 ? "📈" : "📉"
-      markdown += `| ${name}@${version} | ${formatBytes(stats.before)} | ${formatBytes(stats.after)} | ${symbol} ${formatBytes(Math.abs(stats.diff))} | ${isNaN(stats.percentChange) ? "N/A" : stats.percentChange.toFixed(2)}% |\n`
+      markdown += `| ${name}@${version} | ${formatBytes(stats.before)} | ${formatBytes(stats.after)} | ${symbol} ${formatBytes(Math.abs(stats.diff))} | ${typeof stats.percentChange === "number" ? stats.percentChange.toFixed(2) + "%" : stats.percentChange} |\n`
     }
   } else {
     markdown += "No significant changes in bundle size.\n"

@@ -131,8 +131,10 @@ function generateDiffMarkdown(prData, mainData, dependencies) {
 
   const significantChanges = sortedDiffs.filter(
     ([, stats]) =>
-      typeof stats.percentChange === "number" &&
-      (Math.abs(stats.percentChange) > 1 || Math.abs(stats.diff) > 1024),
+      (typeof stats.percentChange === "number" &&
+        (Math.abs(stats.percentChange) > 1 || Math.abs(stats.diff) > 1024)) ||
+      stats.percentChange === "Added" ||
+      stats.percentChange === "Removed",
   )
 
   if (significantChanges.length > 0) {
